@@ -17,6 +17,7 @@ import random
 import urllib
 import urllib.parse
 import argparse
+import datetime
 from xml.sax import saxutils
 
 import util
