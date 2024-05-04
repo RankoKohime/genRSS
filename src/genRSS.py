@@ -241,6 +241,28 @@ def main(argv=None):
             ]
             sorted_files = zip(file_names, pub_dates)
 
+        sorted_files = []
+        for file_name in file_names:
+            if len(file_name) >= 8 and file_name[:8].isdigit():
+                print("Entered if")
+                # Extract and format the date if the first 8 characters are digits
+                date_str = file_name[:8]
+                try:
+                    date_obj = datetime.datetime.strptime(date_str, "%Y%m%d")
+                    print("Date string:", date_str)
+                    print("Date object:", date_obj)
+                    print("Time tuple:", date_obj.timetuple())
+                    pub_date = time.mktime(date_obj.timetuple())
+                except ValueError:
+                    # Handle the case where the date is invalid
+                    pub_date = time.time()  # Default to current time if the date is invalid
+            else:
+            # Use the current time minus days and random seconds logic for other files
+                pub_date = time.time() - (60 * 60 * 24 * file_names.index(file_name) + (random.random() * 10))
+
+        pub_date_formatted = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime(pub_date))
+        sorted_files.append((file_name, pub_date_formatted))
+
         # write dates in RFC 822 format
         sorted_files = (
             (
