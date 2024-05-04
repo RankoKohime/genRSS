@@ -244,10 +244,10 @@ def main(argv=None):
 
         sorted_files = []
         for file_name in file_names:
-            if len(file_name) >= 8 and file_name[:8].isdigit():
-                print("Entered if")
+            base_file_name = os.path.basename(file_name)
+            if len(base_file_name) >= 8 and base_file_name[:8].isdigit():
                 # Extract and format the date if the first 8 characters are digits
-                date_str = file_name[:8]
+                date_str = base_file_name[:8]
                 try:
                     date_obj = datetime.datetime.strptime(date_str, "%Y%m%d")
                     print("Date string:", date_str)
@@ -261,8 +261,8 @@ def main(argv=None):
             # Use the current time minus days and random seconds logic for other files
                 pub_date = time.time() - (60 * 60 * 24 * file_names.index(file_name) + (random.random() * 10))
 
-        pub_date_formatted = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime(pub_date))
-        sorted_files.append((file_name, pub_date_formatted))
+            pub_date_formatted = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime(pub_date))
+            sorted_files.append((file_name, pub_date_formatted))
 
         # write dates in RFC 822 format
         sorted_files = (
