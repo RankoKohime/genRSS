@@ -244,34 +244,46 @@ def main(argv=None):
 
         sorted_files = []
         for file_name in file_names:
-            base_file_name = os.path.basename(file_name)
-            if len(base_file_name) >= 8 and base_file_name[:8].isdigit():
+            try:
+                base_file_name = os.path.basename(file_name)
+                if len(base_file_name) >= 8 and base_file_name[:8].isdigit():
                 # Extract and format the date if the first 8 characters are digits
-                date_str = base_file_name[:8]
-                try:
-                    date_obj = datetime.datetime.strptime(date_str, "%Y%m%d")
-                    print("Date string:", date_str)
-                    print("Date object:", date_obj)
-                    print("Time tuple:", date_obj.timetuple())
-                    pub_date = time.mktime(date_obj.timetuple())
-                except ValueError:
+                    date_str = base_file_name[:8]
+                    try:
+                        date_obj = datetime.datetime.strptime(date_str, "%Y%m%d")
+                        pub_date = time.mktime(date_obj.timetuple())
+                    except ValueError:
                     # Handle the case where the date is invalid
-                    pub_date = time.time()  # Default to current time if the date is invalid
-            else:
+                        pub_date = time.time()  # Default to current time if the date is invalid
+                else:
             # Use the current time minus days and random seconds logic for other files
-                pub_date = time.time() - (60 * 60 * 24 * file_names.index(file_name) + (random.random() * 10))
-
-            pub_date_formatted = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime(pub_date))
-            sorted_files.append((file_name, pub_date_formatted))
+                    pub_date = time.time() - (60 * 60 * 24 * file_names.index(file_name) + (random.random() * 10))
+                print("Pub Date (Epoch):", pub_date)
+                try:
+                    gmtime_result = time.gmtime(pub_date)
+                    print("GMTime Result:", gmtime_result)
+                    pub_date_formatted = time.strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime_result)
+                    print("Publication Date Formatted:", pub_date_formatted)
+                except Exception as e:
+                    print("Error formatting date:", str(e))
+                print(pub_date_formatted)
+                sorted_files.append((file_name, pub_date))
+                print(sorted_files)
+            except TypeError as e:
+                print("Type error occurred:", str(e))
+            except Exception as e:
+                print("An error occurred:", str(e))
 
         # write dates in RFC 822 format
-        sorted_files = (
-            (
-                f[0],
-                time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime(f[1])),
-            )
-            for f in sorted_files
-        )
+        '''
+            sorted_files = [
+                (
+                    f[0],
+                    time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime(f[1])),
+                )
+                for f in sorted_files
+            ]
+        '''
 
         # build items
         items = [
